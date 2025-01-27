@@ -79,7 +79,7 @@ bool login(const string& phoneNumber, const string& password, string& preferredN
     for(int i=0; i<3; ++i){
         if (hashedPassword == account.password) {
         preferredName = account.preferredName;
-        cout << "Login successful! Hello, " << preferredName << "!\n";
+        cout << "Login successful!\n Hello, " << preferredName << "!\n";
         return true;
     } else {
         cout << "Incorrect password!\n";
@@ -282,7 +282,7 @@ int main() {
 
                 switch (choice) {
                     case 1: {
-                        cout << "Enter amount to deposit in CATZ: ";
+                        cout << "Enter amount to deposit in : ";
                         cin >> amount;
                         updateBalance(phoneNumber, amount, true, "deposit");
                         cout<<"deposit successful\n";
@@ -300,13 +300,13 @@ int main() {
                         if (verifyPassword(phoneNumber, senderPassword)) {
                             updateBalance(phoneNumber, amount, false, "withdraw");
                         }
-                        cout<<"withdraw successful!/n";
+                        cout<<"withdraw successful!\n";
                         cout<<"....****....****....****....\n";
                         break;
                     }
 
                     case 3:
-                        cout << "Your balance is: " << checkBalance(phoneNumber) << "CATZ\n";
+                        cout << "Your balance is: $" << checkBalance(phoneNumber) << "\n";
                         break;
 
                     case 4: {
