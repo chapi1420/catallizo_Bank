@@ -60,7 +60,6 @@ void createAccount(const string& phoneNumber, const string& password, const stri
         cerr << "Error creating account!\n";
     }
 }
-
 // Login to an account
 bool login(const string& phoneNumber, const string& password, string& preferredName) {
     string filename = "credentials/" + phoneNumber + ".dat";
@@ -74,20 +73,19 @@ bool login(const string& phoneNumber, const string& password, string& preferredN
     AccountData account;
     file.read(reinterpret_cast<char*>(&account), sizeof(AccountData));
 
-    //log-in password
+    // Log-in password
     string hashedPassword = hashPassword(password);
-    for(int i=0; i<3; ++i){
+    for (int i = 0; i < 3; ++i) {
         if (hashedPassword == account.password) {
-        preferredName = account.preferredName;
-        cout << "Login successful!\n Hello, " << preferredName << "!\n";
-        return true;
-    } else {
-        cout << "Incorrect password!\n";
-        cout<<"left with "<<2-i<<" chances";
-    }
+            preferredName = account.preferredName;
+            cout << "Login successful!\n Hello, " << preferredName << "!\n";
+            return true;
+        } else {
+            cout << "Incorrect password!\n";
+            cout << "You have " << 2 - i << " chances left.\n";
+        }
     }
     return false;
-    
 }
 
 // Verify sender's password
@@ -182,7 +180,6 @@ void updateBalance(const string& phoneNumber, double amount, bool isDeposit, con
             cerr << "Error recording transaction!\n";
         }
     }
-
 }
 
 // Check account balance
@@ -213,7 +210,6 @@ void transfer(const string& senderPhone, const string& receiverPhone, double amo
         return;
     }
 
-    
     // Check if receiver's account exists
     if (!accountExists(receiverPhone)) {
         cout << "Error: The receiver's account does not exist. Please check the phone number and try again.\n";
@@ -227,17 +223,14 @@ void transfer(const string& senderPhone, const string& receiverPhone, double amo
         return;
     }
 
-
-
     // Withdraw from sender
     updateBalance(senderPhone, amount, false, "transfer-out");
 
     // Deposit to receiver
     updateBalance(receiverPhone, amount, true, "transfer-in");
 
+    cout << "Transfer successful!\n";
 }
-
-
 
 // View transaction history
 void viewTransactionHistory(const string& phoneNumber) {
@@ -262,95 +255,100 @@ int main() {
     string phoneNumber, password, preferredName;
     double amount;
 
-    // First experience: Enter phone number
-    cout << "Welcome to the Catallizo wallet System!\n";
-    cout << "Enter your phone number: ";
-    cin >> phoneNumber;
+    while (true) {
+        // First experience: Enter phone number
+        cout << "Welcome to the Catallizo wallet System!\n";
+        cout << "Enter your phone number: ";
+        cin >> phoneNumber;
 
-    if (accountExists(phoneNumber)) {
-        // Login
-        cout << "Account found. Please log in.\n";
-        cout << "Enter your password: ";
-        cin >> password;
+        if (accountExists(phoneNumber)) {
+            // Login
+            cout << "Account found. Please log in.\n";
+            cout << "Enter your password: ";
+            cin >> password;
 
-        if (login(phoneNumber, password, preferredName)) {
-            // Logged in successfully
-            int choice;
-            while (true) {
-                cout << "\n1. Deposit\n2. Withdraw\n3. Check Balance\n4. Transfer\n5. View Transaction History\n6. Exit\n";
-                cin >> choice;
+            if (login(phoneNumber, password, preferredName)) {
+                // Logged in successfully
+                int choice;
+                while (true) {
+                    cout << "\n1. Deposit\n2. Withdraw\n3. Check Balance\n4. Transfer\n5. View Transaction History\n6. Exit\n";
+                    cin >> choice;
 
-                switch (choice) {
-                    case 1: {
-                        cout << "Enter amount to deposit in : ";
-                        cin >> amount;
-                        updateBalance(phoneNumber, amount, true, "deposit");
-                        cout<<"deposit successful\n";
-                        cout<<"....****....****....****....\n";
-                        break;
-                    }
-
-                    case 2: {
-                        cout<<"....****....****....****....\n";
-                        cout << "Enter amount to withdraw: ";
-                        cin >> amount;
-                        cout << "Verify your identity. Enter your password: ";
-                        string senderPassword;
-                        cin >> senderPassword;
-                        if (verifyPassword(phoneNumber, senderPassword)) {
-                            updateBalance(phoneNumber, amount, false, "withdraw");
+                    switch (choice) {
+                        case 1: {
+                            cout << "Enter amount to deposit: ";
+                            cin >> amount;
+                            updateBalance(phoneNumber, amount, true, "deposit");
+                            cout << "Deposit successful!\n";
+                            cout << "....****....****....****....\n";
+                            break;
                         }
-                        cout<<"withdraw successful!\n";
-                        cout<<"....****....****....****....\n";
-                        break;
+
+                        case 2: {
+                            cout << "....****....****....****....\n";
+                            cout << "Enter amount to withdraw: ";
+                            cin >> amount;
+                            cout << "Verify your identity. Enter your password: ";
+                            string senderPassword;
+                            cin >> senderPassword;
+                            if (verifyPassword(phoneNumber, senderPassword)) {
+                                updateBalance(phoneNumber, amount, false, "withdraw");
+                                cout << "Withdraw successful!\n";
+                            }
+                            cout << "....****....****....****....\n";
+                            break;
+                        }
+
+                        case 3:
+                            cout << "Your balance is: $" << checkBalance(phoneNumber) << "\n";
+                            break;
+
+                        case 4: {
+                            cout << "....****....****....****....\n";
+                            string receiverPhone;
+                            cout << "Enter receiver's phone number: ";
+                            cin >> receiverPhone;
+                            cout << "Enter amount to transfer: ";
+                            cin >> amount;
+                            cout << "Verify your identity. Enter your password: ";
+                            string senderPassword;
+                            cin >> senderPassword;
+                            cout << "Verify receiver's identity. Enter receiver's preferred name: ";
+                            string receiverPreferredName;
+                            cin >> receiverPreferredName;
+                            transfer(phoneNumber, receiverPhone, amount, senderPassword, receiverPreferredName);
+                            cout << "Transfer successful!\n";
+                            cout << "....****....****....****....\n";
+                            break;
+                        }
+
+                        case 5:
+                            cout << "....****....****....****....\n";
+                            viewTransactionHistory(phoneNumber);
+                            cout << "....****....****....****....\n";
+                            break;
+
+                        case 6:
+                            cout << "Exiting...\n";
+                            return 0;
+
+                        default:
+                            cout << "Invalid choice!\n";
                     }
-
-                    case 3:
-                        cout << "Your balance is: $" << checkBalance(phoneNumber) << "\n";
-                        break;
-
-                    case 4: {
-                        cout<<"....****....****....****....\n";
-                        string receiverPhone;
-                        cout << "Enter receiver's phone number: ";
-                        cin >> receiverPhone;
-                        cout << "Enter amount to transfer: ";
-                        cin >> amount;
-                        cout << "Verify your identity. Enter your password: ";
-                        string senderPassword;
-                        cin >> senderPassword;
-                        cout << "Verify receiver's identity. Enter receiver's preferred name: ";
-                        string receiverPreferredName;
-                        cin >> receiverPreferredName;
-                        transfer(phoneNumber, receiverPhone, amount, senderPassword, receiverPreferredName);
-                        cout<<"transfer successful!";
-                        cout<<"....****....****....****....\n";
-                        break;
-                    }
-
-                    case 5:
-                        cout<<"....****....****....****....\n";
-                        viewTransactionHistory(phoneNumber);
-                        cout<<"....****....****....****....\n";
-                        break;
-
-                    case 6:
-                        cout << "Exiting...\n";
-                        return 0;
-
-                    default:
-                        cout << "Invalid choice!\n";
                 }
             }
+        } else {
+            // Create new account
+            cout << "Account not found. Create a new account.\n";
+            cout << "Enter a password: ";
+            cin >> password;
+            cout << "Enter your preferred name: ";
+            cin >> preferredName;
+            createAccount(phoneNumber, password, preferredName);
+
+            // After creating the account, proceed to login
+            cout << "Account created successfully! Redirecting to login...\n";
         }
-    } else {
-        // Create new account
-        cout << "Account not found. Create a new account.\n";
-        cout << "Enter a password: ";
-        cin >> password;
-        cout << "Enter your preferred name: ";
-        cin >> preferredName;
-        createAccount(phoneNumber, password, preferredName);
     }
 
     return 0;
