@@ -263,7 +263,7 @@ int main() {
     double amount;
 
     // First experience: Enter phone number
-    cout << "Welcome to the Mini Bank System!\n";
+    cout << "Welcome to the Catallizo wallet System!\n";
     cout << "Enter your phone number: ";
     cin >> phoneNumber;
 
@@ -282,10 +282,10 @@ int main() {
 
                 switch (choice) {
                     case 1: {
-                        cout << "Enter amount to deposit: ";
+                        cout << "Enter amount to deposit in CATZ: ";
                         cin >> amount;
                         updateBalance(phoneNumber, amount, true, "deposit");
-                        cout<<"deposit successful";
+                        cout<<"deposit successful\n";
                         cout<<"....****....****....****....\n";
                         break;
                     }
@@ -300,13 +300,13 @@ int main() {
                         if (verifyPassword(phoneNumber, senderPassword)) {
                             updateBalance(phoneNumber, amount, false, "withdraw");
                         }
-                        cout<<"withdraw successful!";
+                        cout<<"withdraw successful!/n";
                         cout<<"....****....****....****....\n";
                         break;
                     }
 
                     case 3:
-                        cout << "Your balance is: " << checkBalance(phoneNumber) << "$\n";
+                        cout << "Your balance is: " << checkBalance(phoneNumber) << "CATZ\n";
                         break;
 
                     case 4: {
