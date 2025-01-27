@@ -74,15 +74,20 @@ bool login(const string& phoneNumber, const string& password, string& preferredN
     AccountData account;
     file.read(reinterpret_cast<char*>(&account), sizeof(AccountData));
 
+    //log-in password
     string hashedPassword = hashPassword(password);
-    if (hashedPassword == account.password) {
+    for(int i=0; i<3; ++i){
+        if (hashedPassword == account.password) {
         preferredName = account.preferredName;
         cout << "Login successful! Hello, " << preferredName << "!\n";
         return true;
     } else {
         cout << "Incorrect password!\n";
-        return false;
+        cout<<"left with "<<2-i<<" chances";
     }
+    }
+    return false;
+    
 }
 
 // Verify sender's password
@@ -121,7 +126,7 @@ bool verifyReceiverName(const string& receiverPhone, const string& preferredName
     file.read(reinterpret_cast<char*>(&account), sizeof(AccountData));
 
     if (preferredName == account.preferredName) {
-        return true; // Receiver's name verified
+        return true; 
     } else {
         cout << "Verification failed. Incorrect receiver's preferred name.\n";
         return false;
@@ -178,7 +183,6 @@ void updateBalance(const string& phoneNumber, double amount, bool isDeposit, con
         }
     }
 
-    cout << "Balance updated successfully!\n";
 }
 
 // Check account balance
@@ -209,12 +213,7 @@ void transfer(const string& senderPhone, const string& receiverPhone, double amo
         return;
     }
 
-    // Check if sender's account exists
-    if (!accountExists(senderPhone)) {
-        cout << "Error: Your account does not exist. Please create an account first.\n";
-        return;
-    }
-
+    
     // Check if receiver's account exists
     if (!accountExists(receiverPhone)) {
         cout << "Error: The receiver's account does not exist. Please check the phone number and try again.\n";
@@ -228,14 +227,17 @@ void transfer(const string& senderPhone, const string& receiverPhone, double amo
         return;
     }
 
+
+
     // Withdraw from sender
     updateBalance(senderPhone, amount, false, "transfer-out");
 
     // Deposit to receiver
     updateBalance(receiverPhone, amount, true, "transfer-in");
 
-    cout << "Transfer successful!\n";
 }
+
+
 
 // View transaction history
 void viewTransactionHistory(const string& phoneNumber) {
@@ -283,10 +285,13 @@ int main() {
                         cout << "Enter amount to deposit: ";
                         cin >> amount;
                         updateBalance(phoneNumber, amount, true, "deposit");
+                        cout<<"deposit successful";
+                        cout<<"....****....****....****....\n";
                         break;
                     }
 
                     case 2: {
+                        cout<<"....****....****....****....\n";
                         cout << "Enter amount to withdraw: ";
                         cin >> amount;
                         cout << "Verify your identity. Enter your password: ";
@@ -295,14 +300,17 @@ int main() {
                         if (verifyPassword(phoneNumber, senderPassword)) {
                             updateBalance(phoneNumber, amount, false, "withdraw");
                         }
+                        cout<<"withdraw successful!";
+                        cout<<"....****....****....****....\n";
                         break;
                     }
 
                     case 3:
-                        cout << "Your balance is: " << checkBalance(phoneNumber) << "\n";
+                        cout << "Your balance is: " << checkBalance(phoneNumber) << "$\n";
                         break;
 
                     case 4: {
+                        cout<<"....****....****....****....\n";
                         string receiverPhone;
                         cout << "Enter receiver's phone number: ";
                         cin >> receiverPhone;
@@ -315,11 +323,15 @@ int main() {
                         string receiverPreferredName;
                         cin >> receiverPreferredName;
                         transfer(phoneNumber, receiverPhone, amount, senderPassword, receiverPreferredName);
+                        cout<<"transfer successful!";
+                        cout<<"....****....****....****....\n";
                         break;
                     }
 
                     case 5:
+                        cout<<"....****....****....****....\n";
                         viewTransactionHistory(phoneNumber);
+                        cout<<"....****....****....****....\n";
                         break;
 
                     case 6:
