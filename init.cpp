@@ -317,7 +317,6 @@ int main() {
                             string receiverPreferredName;
                             cin >> receiverPreferredName;
                             transfer(phoneNumber, receiverPhone, amount, senderPassword, receiverPreferredName);
-                            cout << "Transfer successful!\n";
                             cout << "....****....****....****....\n";
                             break;
                         }
